@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+	html, body {
+		margin: 0;
+		padding: 0;
+		color: #343434;
+		height: 100%;
+   		font: normal 14px "Source Code Pro",monospace;
+	}
+
+	/* background: #E8EAF6; */
+	#content, #result{
+		width: 100%;
+		margin: 0;
+		box-sizing: border-box;
+  		-moz-box-sizing: border-box;
+  		-webkit-box-sizing: border-box;
+		height: 50%;
+   		overflow: auto;
+	}
+
+	#content {
+   		display: block;
+   		border: 0;
+	}
+
+	#content .child {
+		padding: 10px 20px;
+		width: 100%;
+	}
+
+	#content textarea {
+   		outline: none;
+   		font: normal 14px "Source Code Pro",monospace;
+   		border: 0;
+   		padding: 0;
+   		margin: 0;
+   		resize: none;
+   		display: block;
+   		height: 10px;
+   		overflow: hidden;
+   		line-height: 25px;
+	}
+
+	#content .focus {
+		background: #F0F2FF;
+	}
+
+	#result {
+		background: #E9FDE0;
+		border-top: 1px solid #eee;
+		padding: 10px 20px;
+	}
+
+	#result h1, h2, h3, h4, h5, h6 {
+		margin: 0;
+		margin: 5px 0;
+	}
+
+	#result p {
+		word-wrap: break-word;
+	}
+	</style>
+	<script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
+	<script src="autosize.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			autosize($('textarea'));
+
+			$("#content .child").click(function() {
+				if($(this).hasClass("focus")) return;
+				$(".focus").removeClass("focus");
+				$(this).addClass('focus');
+			});
+
+			$("#content textarea").bind('input propertychange', function() {
+				autosize($(this));
+
+				var html = "";
+				var lines = $(this).val().split('\n');
+				$.each(lines, function(){
+					line = this;
+
+					//h1, h2, ..
+					header = 0;
+					while(line[0] == "#") {
+						header++;
+						line = line.substring(1);
+					}
+					if(header > 6) header = 6;
+
+					//italics, bold, underline
+					line = line.replace(/_(.+)_/g, function(match, group) {
+					  	return "<u>" + group + "</u>";
+					});
+					line = line.replace(/%(.+)%/g, function(match, group) {
+					  	return "<i>" + group + "</i>";
+					});
+					line = line.replace(/\*(.+)\*/g, function(match, group) {
+					  	return "<b>" + group + "</b>";
+					});
+
+					if(header != 0) html += "<h" + header + ">";
+					else html += "<p>";
+
+					if(line == "") line = "&nbsp;";
+				  	html += line;
+				  	
+				  	if(header != 0) html += "</h" + header + ">";
+				  	else html += "</p>";
+				});
+
+				$("#result div[data-pos=" + $(this).data("pos") + "]").html(html);
+			});
+		});
+
+	</script>
+</head>
+<body>
+	<div id="content">
+		<textarea data-pos="1" class="child focus" rows='1'>Hello</textarea>
+		<textarea data-pos="2" class="child" rows='1'>Hello</textarea>
+	</div>
+	<div id="result">
+		<div data-pos="1">Hello</div>
+		<div data-pos="2">Hello</div>
+	</div>
+</body>
+</html>

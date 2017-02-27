@@ -1,0 +1,18 @@
+{
+	"name": "Canvas Grades",
+	"version": "1.0",
+	"permissions": ["webRequest", "webRequestBlocking", "http://*/*", "<all_urls>"],
+	"manifest_version": 2,
+	"content_scripts": [
+		{
+			"matches": [
+				"https://sit.instructure.com/courses/*"
+			],
+			"js": [
+				"jquery.latest.js",
+				"grades.js"
+			],
+			"run_at": "document_start"
+		}
+	]
+}

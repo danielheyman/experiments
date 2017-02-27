@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<script src="./jquery.js" type="text/javascript"></script>
+	<style>
+	body{
+		margin: 0;
+		background: #bbb;
+		font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	}
+	.side{
+		position:absolute;
+		left:-200px;
+		width:180px;
+		padding-top:220px;
+		background: #262626;
+		height:100%;
+		color: #ccc;
+		z-index: 98;
+	}
+
+	.side ul{
+		font-size: 20px;
+		list-style-type: none;
+		padding-left: 0;
+		border-top: 1px solid #161616;
+	}
+
+	.side ul a{
+		padding: 20px;
+		border-bottom: 1px solid #161616;
+		color: #ccc;
+		text-decoration: none;
+		display: inline-block;
+		width: 100%;
+		box-sizing:border-box;
+	}
+
+	.side ul a:hover{
+		color: #0f3;
+	}
+
+	.bottom{
+		position:absolute;
+		bottom: -60px;
+		height: 20px;
+		width: 100%;
+		text-align: right;
+		padding: 20px;
+		padding-right: 100px;
+		background: #262626;
+		color: #eee;
+		line-height:20px;
+		z-index: 98;
+		font-size: 20px;
+	}
+	.toggle{
+		position: absolute;
+		z-index: 99;
+		color: #fff;
+		left: 60px;
+		top: 15px;
+	}
+
+	.background{
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 100%;
+		width: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		display: none;
+	}
+
+	</style>
+</head>
+<body>
+	<div class="side">
+		<ul>
+			<li><a href="#">About Us</a></li>
+			<li><a href="#">Work</a></li>
+			<li><a href="#">Projects</a></li>
+			<li><a href="#">Contact Us</a></li>
+		</ul>
+	</div>
+	<div class="bottom">
+		<i class="fa fa-twitter"></i>
+	</div>
+
+	<div class="toggle">Menu</div>
+
+	<div class="background"></div>
+	<br><br>
+	<center>Click the Menu</center>
+
+	<script type="text/javascript">
+	var toggle = false;
+	$(".toggle").click(function() {
+		if( toggle) untoggle();
+		else {
+			$(".side").animate({
+				"left": 0,
+				"top": -170
+			}, 200);
+			$(".bottom").animate({
+				"bottom": 0,
+				"right": -50
+			}, 200);
+			$(".background").fadeIn(200);
+			toggle = true;
+		}
+	});
+	$(".background").click(function() {
+		untoggle();
+	});
+
+	function untoggle() {
+		$(".side").animate({
+			"left": -200,
+			"top": 0
+		}, 200);
+		$(".bottom").animate({
+			"bottom": -60,
+			"right": 0
+		}, 200);
+		$(".background").fadeOut(200);
+		toggle = false;
+	}
+	</script>
+</body>
+</html>

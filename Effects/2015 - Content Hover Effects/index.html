@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Hover Effects</title>
+	<style type="text/css">
+		.hover-content {
+			width: 480px;
+			height: 360px;
+			background: url(http://tympanus.net/Development/HoverEffectIdeas/img/29.jpg);
+			margin: auto;
+			margin-top: 50px;
+			font-family: 'Raleway', Arial, sans-serif;
+			cursor: pointer;
+		}
+
+		.hover-content img {
+			width: 480px;
+			height: 360px;
+			-webkit-transition: 0.35s;
+    		transition: 0.35s;
+			box-shadow: 0 0 8px rgba(0, 0, 0, .5);
+			position: absolute;
+			z-index: 9;
+		}
+
+		.hover-content:hover img {
+			width: 490px;
+			height: 370px;
+			margin-left: -5px;
+			margin-top: -5px;
+			/*-webkit-transform: perspective(1000px) translate3d(0,0,21px);
+			transform: perspective(1000px) translate3d(0,0,21px);*/
+		}
+
+		.hover-content .title {
+			margin: 40px;
+			background: #fff;
+			color: #2d434e;
+			word-spacing: -0.15em;
+			font-weight: 300;
+			font-size: 25px;
+			text-align: center;
+			position: relative;
+			top: 130px;
+			padding: 8px;
+			box-shadow: 0 1px 10px rgba(0,0,0,0.5);
+			z-index: 10;
+		}
+
+		.hover-content .title .strong {
+			font-weight: 800;
+			display: inline-block;
+		}
+
+		.hover-content .desc {
+			position: relative;
+			top: 100px;
+			background: #fff;
+			color: #2d434e;
+			margin: 40px;
+			padding: 0.5em;
+			font-weight: 800;
+			letter-spacing: 1px;
+			font-size: 14px;
+			text-align: center;
+			box-shadow: 0 1px 10px rgba(0,0,0,0.5);
+			z-index: 10;
+			opacity: 0;
+			-webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+			transition: opacity 0.35s, transform 0.35s;
+			-webkit-transform: scale3d(0.9,0.9,1);
+			transform: scale3d(0.9,0.9,1);
+		}
+
+		.hover-content:hover .desc {
+			opacity: 1;
+			-webkit-transform: scale3d(1,1,1);
+			transform: scale3d(1,1,1);
+		}
+	</style>
+</head>
+<body>
+	<div class="hover-content">
+		<img src="http://tympanus.net/Development/HoverEffectIdeas/img/29.jpg">
+		<div class="title">LONELY <div class="strong">STEVE</div></div>
+		<div class="desc">STEVE WAS AFRAID OF THE BOOGIEMAN.</div>
+	</div>
+</body>
+</html>

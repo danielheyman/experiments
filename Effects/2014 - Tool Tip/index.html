@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- saved from url=(0097)http://netdna.webdesignerdepot.com/uploads7/how-to-create-a-simple-css3-tooltip/tooltip_demo.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<title>CSS3 tooltip</title>
+	
+	<style type="text/css">
+	
+		.tooltip_top, .tooltip_bottom{
+    		position: relative;
+            left:120px;
+            font: 13px/1.7em 'Open Sans';
+            display:inline-block;
+		}
+		
+		.tooltip_top:after, .tooltip_bottom:after{
+            visibility:hidden;
+            opacity:0;
+    		background: #333;
+    		background: rgba(0,0,0,.8);
+    		border-radius: 5px;
+    		color: #fff;
+    		content: attr(title);
+    		padding: 5px 15px;
+    		position: absolute;
+    		z-index: 98;
+    		width: 220px;
+            text-align: center;
+            margin-left: -117px;
+            left:50%; 
+            
+		}
+        
+        .tooltip_top:after
+        {
+            bottom:100%;
+            margin-bottom:36px;
+        }
+        
+        
+        .tooltip_bottom:after
+        {
+            top:100%;
+    		margin-top: 36px;
+        }
+        
+        
+		
+		.tooltip_top:before, .tooltip_bottom:before{
+            visibility:hidden;
+            opacity:0;
+    		border: solid;
+    		border-color: #333 transparent;
+    		content: "";
+    		position: absolute;
+    		z-index: 99;
+            left: 50%;
+            margin-left:-3px;
+		}
+        
+        .tooltip_top:before
+        {
+    		border-width: 6px 6px 0 6px;
+            bottom:100%;
+            margin-bottom: 30px;
+        }
+        
+        
+        .tooltip_bottom:before
+        {
+    		border-width: 0 6px 6px 6px;
+            top:100%;
+    		margin-top: 30px;
+        }
+        
+        
+        .tooltip_top:hover:after{
+            margin-bottom:16px;
+        }
+        
+        .tooltip_top:hover:before{
+            margin-bottom:10px;
+        }
+        
+        
+        .tooltip_bottom:hover:after{
+            margin-top:16px;
+        }
+        
+        .tooltip_bottom:hover:before{
+            margin-top:10px;
+        }
+        
+        .tooltip_top:hover:after, .tooltip_top:hover:before, .tooltip_bottom:hover:after, .tooltip_bottom:hover:before{
+            transition:all 0.3s;
+            visibility:visible;
+            opacity:1;   
+        }
+        
+	
+	</style>
+	
+	
+<style type="text/css"></style></head>
+<body>
+
+
+<br><br><br><br>
+<a href="#" title="This is some informaton for our tooltip." class="tooltip_top">Two line link<br>Open above</a>
+<br><br><br><br>
+<a href="#" title="This is some informaton for our tooltip." class="tooltip_bottom">Tooltip below</a>
+
+
+
+
+</body></html>

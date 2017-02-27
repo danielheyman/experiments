@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Marionette Contact Manager</title>
+    <link href="./assets/css/bootstrap.css" rel="stylesheet">
+    <link href="./assets/css/application.css" rel="stylesheet">
+    <link href="./assets/css/jquery-ui-1.10.0.custom.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div id="header-region"></div>
+
+    <div id="main-region" class="container">
+      <p>Here is static content in the web page. You'll notice that it gets replaced by our app as soon as we start it.</p>
+    </div>
+
+    <div id="dialog-region"></div>
+
+    <script type="text/template" id="header-template">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#{{- i18nUrl('contacts') }}">Contact manager</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav"></ul>
+          </div>
+
+          <div class="pull-right" style="padding: 10px 15px;">
+            <select class="span1 js-change-language" style="margin-bottom: 0">
+              {{ _.each(ContactManager.i18n.acceptedLanguages, function(lang){ }}
+                {{ var selected = ContactManager.i18n.currentLanguage === lang ? 'selected="selected"' : ''; }}
+                <option {{- selected }} value="{{- lang }}">{{- lang }}</option>
+              {{ }); }}
+            </select>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/template" id="header-link">
+      <a href="#{{- i18nUrl(url) }}">{{- t("menu." + name) }}</a>
+    </script>
+
+    <script type="text/template" id="contact-list">
+      <thead>
+        <tr>
+          <th>{{- t("contact.attributes.firstName") }}</th>
+          <th>{{- t("contact.attributes.lastName") }}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </script>
+
+    <script type="text/template" id="contact-list-none">
+      <td colspan="3">{{- t("contact.noneToDisplay") }}</td>
+    </script>
+
+    <script type="text/template" id="contact-list-item">
+      <td>{{- firstName }}</td>
+      <td>{{- lastName }}</td>
+      <td>
+        <a href="#{{- i18nUrl('contact/' + id) }}" class="btn btn-small js-show">
+          <i class="icon-eye-open"></i>
+          {{- t("generic.show") }}
+        </a>
+        <a href="#{{- i18nUrl('contact/' + id + '/edit') }}" class="btn btn-small js-edit">
+          <i class="icon-pencil"></i>
+          {{- t("generic.edit") }}
+        </a>
+        <button class="btn btn-small js-behavior-confirmable">
+          <i class="icon-remove"></i>
+          {{- t("generic.delete") }}
+        </button>
+      </td>
+    </script>
+
+    <script type="text/template" id="missing-contact-view">
+      <div class="alert alert-error">{{- t("contact.missing") }}</div>
+    </script>
+
+    <script type="text/template" id="contact-view">
+      <h1>{{- fullName }}</h1>
+      <a href="#{{- i18nUrl('contacts/' + id + '/edit') }}" class="btn btn-small js-edit">
+        <i class="icon-pencil"></i>
+        {{- t("contact.editContact") }}
+      </a>
+      <p><strong>{{- t("contact.attributes.phoneNumber") }}:</strong> {{- phoneNumber }}</p>
+
+      <h2>{{- t("contact.attributes.acquaintances") }}</h2>
+      <div id="acquaintances-region"></div>
+
+      <h2>{{- t("contact.attributes.strangers") }}</h2>
+      <div id="strangers-region"></div>
+    </script>
+
+    <script type="text/template" id="contact-acquaintance-view">
+      {{- fullName }} <button class="js-behavior-confirmable">{{- t("generic.remove") }}</button>
+    </script>
+
+    <script type="text/template" id="contact-stranger-view">
+      {{- fullName }} <button class="js-behavior-confirmable">{{- t("acquaintance.modelName") }}</button>
+    </script>
+
+    <script type="text/template" id="loading-view">
+      <h1>{{- title }}</h1>
+      <p>{{- message }}</p>
+      <div id="spinner"></div>
+    </script>
+
+    <script type="text/template" id="pagination-controls">
+      {{ if(totalPages > 1){ }}
+        <ul>
+          {{ if(currentPage > 1){ }}
+            <li><a href="#{{- urlBase ? i18nUrl(urlBase) + 1 : "" }}" class="navigatable" data-page="1">&laquo;</a></li>
+            <li><a href="#{{- urlBase ? i18nUrl(urlBase) + previous  : "" }}" class="navigatable" data-page="{{- previous }}">&lsaquo;</a></li>
+          {{ }else{ }}
+            <li class="disabled"><a href="#">&laquo;</a></li>
+            <li class="disabled"><a href="#">&lsaquo;</a></li>
+          {{ } }}
+
+          {{ if(pageSet[0] > 1 ){ }}
+            <li class="disabled"><a href="#">...</a></li>
+          {{ } }}
+
+          {{ _.each(pageSet, function(page){ }}
+            {{ if(page === currentPage){ }}
+              <li class="active disabled"><a href="#">{{- page }}</a></li>
+            {{ }else{ }}
+              <li><a href="#{{- urlBase ? i18nUrl(urlBase) + page  : "" }}" class="navigatable" data-page="{{- page }}">{{- page }}</a></li>
+            {{ } }}
+          {{ }); }}
+
+          {{ if(pageSet[pageSet.length - 1] !== lastPage){ }}
+            <li class="disabled"><a href="#">...</a></li>
+            <li><a href="#{{- urlBase ? i18nUrl(urlBase) + lastPage  : "" }}" class="navigatable" data-page="{{- lastPage }}">{{- lastPage }}</a></li>
+          {{ } }}
+
+          {{ if(currentPage !== lastPage){ }}
+            <li><a href="#{{- urlBase ? i18nUrl(urlBase) + next  : "" }}" class="navigatable" data-page="{{- next }}">&rsaquo;</a></li>
+            <li><a href="#{{- urlBase ? i18nUrl(urlBase) + lastPage  : "" }}" class="navigatable" data-page="{{- lastPage }}">&raquo;</a></li>
+          {{ }else{ }}
+            <li class="disabled"><a href="#">&rsaquo;</a></li>
+            <li class="disabled"><a href="#">&raquo;</a></li>
+          {{ } }}
+        </ul>
+      {{ } }}
+    </script>
+
+    <script type="text/template" id="paginated-view">
+      <div class="js-pagination-controls"></div>
+      <div class="js-pagination-main"></div>
+    </script>
+
+    <script type="text/template" id="contact-form">
+      {{ if(changedOnServer){ }}
+        <p class="alert alert-info">{{- t("generic.changedOnServer") }}</p>
+      {{ } }}
+      <form>
+        <div class="control-group">
+          <label for="contact-firstName" class="control-label">{{- t("contact.attributes.firstName") }}:</label>
+          <input id="contact-firstName" name="firstName" type="text" value="{{- firstName }}"/>
+        </div>
+        <div class="control-group">
+          <label for="contact-lastName" class="control-label">{{- t("contact.attributes.lastName") }}:</label>
+          <input id="contact-lastName" name="lastName" type="text" value="{{- lastName }}"/>
+        </div>
+        <div class="control-group">
+          <label for="contact-phoneNumber" class="control-label">{{- t("contact.attributes.phoneNumber") }}:</label>
+          <input id="contact-phoneNumber" name="phoneNumber" type="text" value="{{- phoneNumber }}"/>
+        </div>
+        <button class="btn js-submit">{{- t("generic.save") }}</button>
+      </form>
+    </script>
+
+    <script type="text/template" id="contact-list-layout">
+      <div id="panel-region"></div>
+      <div id="contacts-region"></div>
+    </script>
+
+    <script type="text/template" id="contact-list-panel">
+      <button class="btn btn-primary js-new">{{- t("contact.newContact") }}</button>
+      <form id="filter-form" class="form-search form-inline pull-right">
+        <div class="input-append">
+          <input type="text" class="span2 search-query js-filter-criterion">
+          <button type="submit" class="btn">{{- t("contact.filterContacts") }}</button>
+        </div>
+      </form>
+    </script>
+
+    <script type="text/template" id="about-message">
+      <h1>{{- t("about.title") }}</h1>
+      <p>{{- t("about.message.design") }}</p>
+      <p>{{- t("about.message.closing") }}</p>
+    </script>
+
+    <script src="./assets/js/vendor/jquery.js"></script>
+    <script src="./assets/js/vendor/jquery-ui-1.10.3.js"></script>
+    <script src="./assets/js/vendor/json2.js"></script>
+    <script src="./assets/js/vendor/underscore.js"></script>
+    <script src="./assets/js/vendor/backbone.js"></script>
+    <script src="./assets/js/vendor/backbone-associations.js"></script>
+    <script src="./assets/js/vendor/backbone.validation.js"></script>
+    <script src="./assets/js/vendor/backbone.paginator.js"></script>
+    <script src="./assets/js/vendor/backbone.picky.js"></script>
+    <script src="./assets/js/vendor/backbone.syphon.js"></script>
+    <script src="./assets/js/vendor/backbone.marionette.js"></script>
+    <script src="./assets/js/vendor/polyglot.js"></script>
+    <script src="./assets/js/vendor/spin.js"></script>
+    <script src="./assets/js/vendor/spin.jquery.js"></script>
+
+    <script type="text/javascript">
+      window.polyglot = new Polyglot();
+      _.bindAll(polyglot, "t");
+      window.t = polyglot.t;
+
+      polyglot.extend({
+        "generic.show": "Show",
+        "generic.edit": "Edit",
+        "generic.save": "Save",
+        "generic.delete": "Delete",
+        "generic.remove": "Remove",
+        "generic.changedOnServer": "This model has changed on the server, and has been updated with the latest data from the server and your changes have been reapplied.",
+        "generic.confirmationMessage": "Are you sure?",
+        "generic.unprocessedError": "An unprocessed error happened. Please try again!",
+
+        "menu.Contacts": "Contacts",
+        "menu.About": "About",
+
+        "about.title": "About this application",
+        "about.message.design": "This application was designed to accompany you during your learning.",
+        "about.message.closing": "Hopefully, it has served you well !",
+
+        "acquaintance.modelName": "Acquaintance",
+        "acquaintance.addConfirmation": "Add %{firstName} as an acquaintance?",
+
+        "contact.attributes.firstName": "First Name",
+        "contact.attributes.lastName": "Last Name",
+        "contact.attributes.phoneNumber": "Phone number",
+        "contact.attributes.acquaintances": "Acquaintances",
+        "contact.attributes.strangers": "Strangers",
+
+        "contact.newContact": "New contact",
+        "contact.editContact": "Edit this contact",
+        "contact.filterContacts": "Filter contacts",
+        "contact.noneToDisplay": "No contacts to display.",
+        "contact.missing": "This contact doesn't exist !",
+
+        "loading.title": "Loading Data",
+        "loading.message": "Please wait, data is loading."
+      });
+    </script>
+
+    <script src="./assets/js/apps/config/marionette/views/template_helpers.js"></script>
+    <script src="./assets/js/apps/config/marionette/regions/dialog.js"></script>
+    <script src="./assets/js/app.js"></script>
+    <script src="./assets/js/entities/common.js"></script>
+    <script src="./assets/js/entities/header.js"></script>
+    <script src="./assets/js/entities/contact.js"></script>
+    <script src="./assets/js/entities/repository.js"></script>
+    <script src="./assets/js/common/views.js"></script>
+    <script src="./assets/js/common/behaviors.js"></script>
+
+    <script src="./assets/js/apps/contacts/contacts_app.js"></script>
+    <script src="./assets/js/apps/contacts/common/views.js"></script>
+    <script src="./assets/js/apps/contacts/list/list_view.js"></script>
+    <script src="./assets/js/apps/contacts/list/list_controller.js"></script>
+    <script src="./assets/js/apps/contacts/show/show_view.js"></script>
+    <script src="./assets/js/apps/contacts/show/show_controller.js"></script>
+    <script src="./assets/js/apps/contacts/edit/edit_view.js"></script>
+    <script src="./assets/js/apps/contacts/edit/edit_controller.js"></script>
+    <script src="./assets/js/apps/contacts/new/new_view.js"></script>
+
+    <script src="./assets/js/apps/about/about_app.js"></script>
+    <script src="./assets/js/apps/about/show/show_view.js"></script>
+    <script src="./assets/js/apps/about/show/show_controller.js"></script>
+
+    <script src="./assets/js/apps/header/header_app.js"></script>
+    <script src="./assets/js/apps/header/list/list_view.js"></script>
+    <script src="./assets/js/apps/header/list/list_controller.js"></script>
+
+    <script type="text/javascript">
+      ContactManager.start({
+        acceptedLanguages: ["en", "fr"]
+      });
+    </script>
+  </body>
+</html>
