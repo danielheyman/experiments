@@ -6,7 +6,7 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"https://es.stevens.edu/ia-bin/tsrvweb.exe"
+				"https://es.stevens.edu/ia-bin/tsrvweb.exe*"
 			],
 			"js": [
 				"jquery.latest.js",

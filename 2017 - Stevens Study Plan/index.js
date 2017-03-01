@@ -54,7 +54,7 @@ var studyplan = {
 	"CAL 105": null,
 	"HUM 100/200": {
 		groupsOpt: [
-			{groups: ["HUM", "HHS", "HSS", "HLI", "HST", "COMM", "HTH"], levelMin: 100, levelMax: 299},
+			{groups: ["HUM", "HHS", "HSS", "HLI", "HST", "COMM", "HTH", "HPL"], levelMin: 100, levelMax: 299},
 		],
 		classes: [
 			"HAR 180", "HAR 181", "HAR 280", "HAR 281", "HMU 101", "HMU 102", "HMU 192", "HMU 193", "HMU 195"
@@ -62,7 +62,7 @@ var studyplan = {
 	},
 	"HUM 300": {
 		groupsOpt: [
-			{groups: ["HUM", "HHS", "HSS", "HLI", "HST", "COMM", "HTH"], levelMin: 300, levelMax: 399},
+			{groups: ["HUM", "HHS", "HSS", "HLI", "HST", "COMM", "HTH", "HPL"], levelMin: 300, levelMax: 399},
 		],
 		classes: [
 			"BT 243", "BT 244", "HAR 380", "HAR 389", "HMU 350"
@@ -70,7 +70,7 @@ var studyplan = {
 	},
 	"HSS 371 / HPL 455": { classes: ["HSS 371", "HPL 455"] },
 	"HUM": [{
-		groups: ["HUM", "HHS", "HSS", "HLI", "HST", "COMM", "HTH"],
+		groups: ["HUM", "HHS", "HSS", "HLI", "HST", "COMM", "HTH", "HPL"],
 		classes: [
 			"HAR 180", "HAR 181", "HAR 280", "HAR 281", "HAR 380", "HAR 389", "HAR 485", "HMU 101", "HMU 102", "HMU 192", "HMU 193", "HMU 195", "HMU 350", "BT 243", "BT 244"
 		]
@@ -96,7 +96,7 @@ $(document).ready(function()
 		})[res[2]];
 		
 		// Took already
-		var classmatch = /;(\w+)\s*-(\d+)-([\d\w]+)[\s\S]*?([A-FP-]+)\s+(\d.\d\d)/g;
+		var classmatch = /;(\w+)\s*-(\d+)-([\d\w]+)[\s\S]*?([A-FPW+-]+)\s+\(?(\d.\d\d)\)?/g;
 		var classes = [];
 		while((c = classmatch.exec(res[3])) !== null) {
 			classes.push(c.slice(1,6));
@@ -118,7 +118,7 @@ var unassigned = [];
 
 var fill = function(period, classes) {
 	classes.forEach(function(c) {
-		if((c[3] == 'F' || c[3] == 'P') && c[0] != 'PE') {
+		if(c[3] == 'F' || c[3] == 'W') {
 			var temp = c.slice(0);
 			temp.unshift(period);
 			unassigned.push(temp);
@@ -198,28 +198,31 @@ var printFilled = function() {
 		last = key.slice(0, 2);
 		if(Array.isArray(studyplan[key])) {
 			addRes('<b>' + key + '</b>: ');
+			var count = 0;
 			filled[key].forEach(function(c) {
 				addRes(courseString(c));
+				count++;
 			});
+			while(count++ < studyplan[key][1]) addRes(courseString(null));
 		}
 		else addRes('<b>' + key + '</b>: ' + courseString(filled[key]));
 	});
 	
 	addRes("<br><br><hr>");
-	addRes('<b>Other Credit:</b>');
+	addRes('<b>General Elective Credits:</b>');
 	unassigned.forEach(function(c) {
-		if(c[4] == 'F' || c[4] == 'P') return;
+		if(c[4] == 'F' || c[4] == 'P' || c[4] == 'W') return;
 		addRes(courseString(c));
 	});
 	
 	addRes("<br><br><hr>");
-	addRes('<b>Other Pass/Fail:</b>');
+	addRes('<b>Other Pass/Fail/Withdraw:</b>');
 	unassigned.forEach(function(c) {
-		if(c[4] != 'F' && c[4] != 'P') return;
+		if(c[4] != 'F' && c[4] != 'P' && c[4] != 'W') return;
 		addRes(courseString(c));
 	});
 	
-	res += '<br>'
+	res += '<br>';
 	
 	$("body").append(res);
 };
